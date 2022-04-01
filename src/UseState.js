@@ -7,31 +7,50 @@ const UseState = () => {
     value: "",
     error: false,
     loading: false,
+    deleted: false,
+    confirmed: false,
   });
-  // const [value, setValue] = useState("");
-  // const [error, setError] = useState(false);
-  // const [loading, setLoading] = useState(false);
+
+  const onConfirm = () => {
+    setState({
+      ...state,
+      loading: false,
+      error: false,
+      confirmed: true,
+    });
+  };
+
+  const onError = () => {
+    setState({
+      ...state,
+      error: true,
+      loading: false,
+    });
+  };
+
+  const onWrite = (newEvent) => setState({ ...state, value: newEvent });
+
+  const onCheck = () => setState({ ...state, loading: true });
+
+  const onDelete = () => setState({ ...state, deleted: true });
+
+  const onReset = () => {
+    setState({ ...state, confirmed: false, deleted: false, value: "" });
+  };
 
   useEffect(() => {
     if (state.loading) {
       setTimeout(() => {
         if (state.value === SECURITY_CODE) {
-          setState({
-            ...state,
-            loading: false,
-            error: false,
-          });
+          onConfirm();
         } else {
-          setState({
-            ...state,
-            error: false,
-            loading: false,
-          });
+          onError();
         }
       }, 3000);
     }
-  }, [state.loading, state.value]);
-  return (
+  }, [state.loading, state]);
+
+  return !state.confirmed && !state.deleted ? (
     <div>
       <h2>Eliminar UseState</h2>
       <p>Por favor, escriba el código de seguridad.</p>
@@ -43,12 +62,23 @@ const UseState = () => {
         type="text"
         placeholder="código de seguridad"
         value={state.value}
-        onChange={(event) => setState({ ...state, value: event.target.value })}
+        onChange={(event) => onWrite(event.target.value)}
       />
-      <button onClick={() => setState({ ...state, loading: true })}>
-        Comprobar
-      </button>
+      <button onClick={() => onCheck()}>Comprobar</button>
     </div>
+  ) : state.confirmed && !state.deleted ? (
+    <section>
+      <h2>Eliminar UseState</h2>
+      <p>Pedimos confirmacion. ¿Estas seguro?</p>
+      <button onClick={() => onDelete()}>Si, eliminar</button>
+      <button onClick={() => onReset()}>No, volver</button>
+    </section>
+  ) : (
+    <section>
+      <h2>Eliminar UseState</h2>
+      <p>Estado eliminado con exito </p>
+      <button onClick={() => onReset()}>Recuperar estado</button>
+    </section>
   );
 };
 
