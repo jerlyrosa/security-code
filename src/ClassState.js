@@ -1,24 +1,17 @@
 import React from "react";
 import { Loading } from "./Loading";
 
+const SECURITY_CODE = "ragnar";
+
 class ClassState extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      value: "",
       error: false,
       loading: false,
     };
   }
-
-  // UNSAFE_componentWillMount(){
-  //   console.log('componentWillMount: Inicia antes de renderizar nuestro componentes ');
-
-  // }
-
-  // componentDidMount(){
-  //   console.log('componentDidMount: Se ejecuta cuando se renderiza por primera vez  ');
-
-  // }
 
   componentDidUpdate() {
     console.log(
@@ -29,23 +22,32 @@ class ClassState extends React.Component {
       console.log("Validando...");
       setTimeout(() => {
         console.log("Final de la Validacion");
-
-        this.setState({ loading: false });
+        if (this.state.value === SECURITY_CODE) {
+          this.setState({ error: false, loading: false });
+        } else {
+          this.setState({ error: true, loading: false });
+        }
       }, 3000);
     }
   }
 
   render() {
+    const { error, value, loading } = this.state;
     return (
       <div>
         <h2>Eliminar ClassState</h2>
         <p>Por favor, escriba el código de seguridad.</p>
 
-        {this.state.error && <p>Error: el codigo es incorrecto</p>}
+        {error && !loading && <p>Error: el codigo es incorrecto</p>}
 
-        {this.state.loading && <Loading />}
+        {loading && <Loading />}
 
-        <input type="text" placeholder="código de seguridad" />
+        <input
+          type="text"
+          placeholder="código de seguridad"
+          value={value}
+          onChange={(event) => this.setState({ value: event.target.value })}
+        />
         <button
           onClick={() => this.setState((prevState) => ({ loading: true }))}
         >
