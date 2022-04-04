@@ -3,7 +3,7 @@ import React, { useEffect, useReducer } from "react";
 const SECURITY_CODE = "loki";
 
 const initialState = {
-  value: "loki",
+  value: "",
   loading: false,
   error: false,
   deleted: false,
